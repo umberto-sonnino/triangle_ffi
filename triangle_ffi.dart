@@ -66,28 +66,67 @@ main() {
 
   Pointer<TriangulateIO> triIn = allocate();
   Pointer<TriangulateIO> triOut = allocate();
+  Pointer<TriangulateIO> vorOut = allocate();
 
-  const List<double> vertexList = [0, 0, 512, 0, 512, 668, 0, 668];
-  const List<int> edgeList = [0, 1, 1, 2, 2, 3, 3, 0];
-
-  final Pointer<Double> pointList = allocate(count: vertexList.length);
-  for (var i = 0; i < vertexList.length; i++) {
-    pointList[i] = vertexList[i];
-  }
   var inStruct = triIn.ref;
-  inStruct.numberOfPoints = (vertexList.length / 2).floor();
-  inStruct.pointList = pointList;
+  var outStruct = triOut.ref;
+  var vorStruct = vorOut.ref;
 
-  final Pointer<Int32> segmentList = allocate(count: edgeList.length);
-  for (var i = 0; i < edgeList.length; i++) {
-    segmentList[i] = edgeList[i];
-  }
+  inStruct.numberOfPoints = 4;
+  inStruct.numberOfPointAttributes = 1;
 
-  inStruct.numberOfSegments = (edgeList.length / 2).floor();
-  inStruct.segmentList = segmentList;
+  inStruct.pointList = allocate(count: inStruct.numberOfPoints * 2);
+  inStruct.pointList[0] = 0.0;
+  inStruct.pointList[1] = 0.0;
+  inStruct.pointList[2] = 1.0;
+  inStruct.pointList[3] = 0.0;
+  inStruct.pointList[4] = 1.0;
+  inStruct.pointList[5] = 10.0;
+  inStruct.pointList[6] = 0.0;
+  inStruct.pointList[7] = 10.0;
 
-  triangulate(Utf8.toUtf8("pzenQ"), triIn, triOut, null);
+  inStruct.pointAttributeList = allocate(
+      count: inStruct.numberOfPoints * inStruct.numberOfPointAttributes);
+  inStruct.pointAttributeList[0] = 0.0;
+  inStruct.pointAttributeList[1] = 1.0;
+  inStruct.pointAttributeList[2] = 11.0;
+  inStruct.pointAttributeList[3] = 10.0;
+
+  inStruct.pointMarkerList = allocate(count: inStruct.numberOfPoints);
+  inStruct.pointMarkerList[0] = 0;
+  inStruct.pointMarkerList[1] = 2;
+  inStruct.pointMarkerList[2] = 0;
+  inStruct.pointMarkerList[3] = 0;
+
+  inStruct.numberOfSegments = 0;
+  inStruct.numberOfHoles = 0;
+  inStruct.numberOfRegions = 1;
+
+  inStruct.regionList = allocate(count: inStruct.numberOfRegions * 4);
+  inStruct.regionList[0] = 0.5;
+  inStruct.regionList[1] = 5.0;
+  inStruct.regionList[2] = 7.0;
+  inStruct.regionList[3] = 0.1;
+
+  outStruct.pointList = nullptr;
+  outStruct.pointAttributeList = nullptr;
+  outStruct.pointMarkerList = nullptr;
+  outStruct.triangleList = nullptr;
+  outStruct.triangleAttributeList = nullptr;
+  outStruct.neighborList = nullptr;
+  outStruct.segmentList = nullptr;
+  outStruct.segmentMarkerList = nullptr;
+  outStruct.edgeList = nullptr;
+  outStruct.edgeMarkerList = nullptr;
+
+  vorStruct.pointList = nullptr;
+  vorStruct.pointAttributeList = nullptr;
+  vorStruct.edgeList = nullptr;
+  vorStruct.normList = nullptr;
+
+  triangulate(Utf8.toUtf8("pczAevn"), triIn, triOut, vorOut);
 
   free(triIn);
   free(triOut);
+  free(vorOut);
 }
